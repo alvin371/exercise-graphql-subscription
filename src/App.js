@@ -20,7 +20,7 @@ const query = gql`
   }
   `;
 function TodoList() {
-  const { data, load, err } = useQuery(query)
+  const [getTodoList, { data, load, err }] = useLazyQuery(query)
   if (load) {
     return <SVG />
   }
@@ -54,11 +54,15 @@ function TodoList() {
     const newList = list.filter((_, i) => i != idx);
     setList(newList);
   };
-
+  const onGetData = () => {
+    getTodoList()
+    setList(data?.todolist)
+  }
   return (
     <>
       <div className='container'>
         <h1 className='app-title'>todos</h1>
+        <button onClick={onGetData}>Dapetin Data</button>
         <ul className='todo-list js-todo-list'>
           {data.todolist.map((v, i) => (
             <Todo
