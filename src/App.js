@@ -1,8 +1,34 @@
 import { useState } from 'react';
 import './App.css';
 import Todo from 'components/Todo';
+import {
+  ApolloClient,
+  InMemoryCache,
+  ApolloProvider,
+  useQuery,
+  gql
+} from "@apollo/client";
+import SVG from 'components/SVG';
 
+const query = gql`
+  query MyQuery {
+    todolist {
+      id
+      isdone
+      todo
+    }
+  }
+  `;
 function TodoList() {
+  const { data, load, err } = useQuery(query)
+  if (load) {
+    return <SVG />
+  }
+
+  if (err) {
+    console.log(err)
+    return null
+  }
   const [list, setList] = useState([]);
   const [title, setTitle] = useState('');
 
@@ -34,14 +60,14 @@ function TodoList() {
       <div className='container'>
         <h1 className='app-title'>todos</h1>
         <ul className='todo-list js-todo-list'>
-          {list.map((v, i) => (
+          {data.todolist.map((v, i) => (
             <Todo
               key={i}
               id={i}
               onClickItem={() => onClickItem(i)}
               onDeleteItem={() => onDeleteItem(i)}
-              title={v.title}
-              checked={v.checked}
+              title={v.todo}
+              checked={v.isdone}
             />
           ))}
         </ul>
