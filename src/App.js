@@ -6,6 +6,7 @@ import {
   InMemoryCache,
   ApolloProvider,
   useQuery,
+  useLazyQuery,
   gql
 } from "@apollo/client";
 import SVG from 'components/SVG';
@@ -21,6 +22,8 @@ const query = gql`
   `;
 function TodoList() {
   const [getTodoList, { data, load, err }] = useLazyQuery(query)
+  const [list, setList] = useState([]);
+  const [title, setTitle] = useState('');
   if (load) {
     return <SVG />
   }
@@ -29,8 +32,6 @@ function TodoList() {
     console.log(err)
     return null
   }
-  const [list, setList] = useState([]);
-  const [title, setTitle] = useState('');
 
   const onChangeTitle = (e) => {
     if (e.target) {
@@ -64,7 +65,7 @@ function TodoList() {
         <h1 className='app-title'>todos</h1>
         <button onClick={onGetData}>Dapetin Data</button>
         <ul className='todo-list js-todo-list'>
-          {data.todolist.map((v, i) => (
+          {data?.todolist.map((v, i) => (
             <Todo
               key={i}
               id={i}
